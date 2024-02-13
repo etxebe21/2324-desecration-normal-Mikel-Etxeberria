@@ -61,6 +61,8 @@ async function createNewHeroes() {
 
         // Una vez que se han creado los objetos de los héroes, llamar a calculateStart
         calculateStart();
+
+        simulateCombat()
     } catch (error) {
         console.error('Error al inicializar:', error.message);
     }
@@ -79,5 +81,174 @@ function calculateStart() {
     console.log('Random Hero Stats:', randomHeroStats);
 }
 getHeroes();
+
+
+// Función para lanzar un dado de 100 caras (1D100)
+function rollD100() {
+    return Math.floor(Math.random() * 100) + 1;
+}
+
+// Función para lanzar un dado de 20 caras (1D20)
+function rollD20() {
+    return Math.floor(Math.random() * 20) + 1;
+}
+
+
+function rollD3() {
+    return Math.floor(Math.random() * 3) + 1;
+}
+
+function rollD5() {
+    return Math.floor(Math.random() * 5) + 1;
+}
+
+// Función para lanzar cuatro dados de 3 caras (4D3)
+function roll4D3() {
+    let total = 0;
+    for (let i = 0; i < 4; i++) {
+        total += Math.floor(Math.random() * 3) + 1;
+    }
+    return total;
+}
+
+// Función para determinar quién comienza el combate
+function determineStartingHero(junkPileStats, randomHeroStats) {
+    return junkPileStats >= randomHeroStats ? 'JunkPile' : 'RandomHero';
+}
+
+function simulateTurn(attacker, defender) {
+    console.log(`///////////////////////////////////`);
+    console.log(`${attacker} comienza el turno.`);
+    const attackRoll = rollD100();
+    console.log(`${attacker} lanza un dado de 100 caras y obtiene ${attackRoll}.`);
+    
+    // Verificar si el ataque es exitoso comparando con la estadística de combate del atacante
+    if (attackRoll <= (attacker === 'JunkPile' ? junkpileHeroObject.JunkPile.powerstats.combat : randomHeroObject.RandomHero.powerstats.combat)) {
+        console.log(`El ataque de ${attacker} tiene éxito.`);
+        
+        const damageRoll = rollD20();
+        
+        let damageInflicted = damageRoll;
+        
+        if (damageRoll <= 2) {
+            
+            console.log(`${attacker} ha cometido una pifia.`);
+            
+            // Calcular el daño por pifia
+            let pifiaDamage;
+            if (damageRoll === 1) {
+                
+                pifiaDamage = Math.floor(attacker === 'JunkPile' ? junkpileHeroObject.JunkPile.powerstats.speed / rollD3() : randomHeroObject.RandomHero.powerstats.speed / rollD3());
+            } else {
+                
+                pifiaDamage = Math.floor(attacker === 'JunkPile' ? junkpileHeroObject.JunkPile.powerstats.speed / roll4D3() : randomHeroObject.RandomHero.powerstats.speed / roll4D3());
+            }
+            
+            console.log(`${attacker} sufre ${pifiaDamage} puntos de daño por pifia.`);
+            
+            // Reducir los puntos de vida del héroe que realiza la pifia
+            if (attacker === 'JunkPile') {
+                junkpileHeroObject.JunkPile.powerstats.hitPoints -= pifiaDamage;
+            } else {
+                randomHeroObject.RandomHero.powerstats.hitPoints -= pifiaDamage;
+            }
+            
+            // Asignar el daño por pifia al daño total infligido
+            damageInflicted = pifiaDamage;
+        }
+         else if (damageRoll >= 3 && damageRoll <= 17) {
+            
+            const powerStrengthDamage = Math.ceil((attacker === 'JunkPile' ? (junkpileHeroObject.JunkPile.powerstats.power + junkpileHeroObject.JunkPile.powerstats.strength) : (randomHeroObject.RandomHero.powerstats.power + randomHeroObject.RandomHero.powerstats.strength)) * (damageRoll / 100));
+            console.log(`${attacker} inflige ${powerStrengthDamage} puntos de daño a ${defender}.`);
+            damageInflicted = powerStrengthDamage;
+        }
+
+        else if (damageRoll >= 18 && damageRoll <= 20) {
+            let criticalDamage;
+            
+            if (damageRoll === 18) {
+                criticalDamage = Math.floor((attacker === 'JunkPile' ? junkpileHeroObject.JunkPile.powerstats.intelligence * junkpileHeroObject.JunkPile.powerstats.durability : randomHeroObject.RandomHero.powerstats.intelligence * randomHeroObject.RandomHero.powerstats.durability) / 100) * rollD3();
+            } else if (damageRoll === 19) {
+                criticalDamage = Math.floor((attacker === 'JunkPile' ? junkpileHeroObject.JunkPile.powerstats.intelligence * junkpileHeroObject.JunkPile.powerstats.durability : randomHeroObject.RandomHero.powerstats.intelligence * randomHeroObject.RandomHero.powerstats.durability) / 100) * (rollD3() + rollD3());
+            } else {
+                criticalDamage = Math.floor((attacker === 'JunkPile' ? junkpileHeroObject.JunkPile.powerstats.intelligence * junkpileHeroObject.JunkPile.powerstats.durability : randomHeroObject.RandomHero.powerstats.intelligence * randomHeroObject.RandomHero.powerstats.durability) / 100) * (rollD5() + rollD5() + rollD5());
+            }
+            
+            console.log(`¡CRITICAL HIT! ${attacker} inflige ${criticalDamage} puntos de daño crítico a ${defender}.`);
+            
+            // Calcular el daño normal
+            const powerStrengthDamage = Math.ceil((attacker === 'JunkPile' ? (junkpileHeroObject.JunkPile.powerstats.power + junkpileHeroObject.JunkPile.powerstats.strength) : (randomHeroObject.RandomHero.powerstats.power + randomHeroObject.RandomHero.powerstats.strength)) * (damageRoll / 100));
+            
+            console.log(`${attacker} inflige ${powerStrengthDamage} puntos de daño normal a ${defender}.`);
+            
+            // Sumar el daño crítico y el daño normal al daño total infligido
+            const totalDamage = criticalDamage + powerStrengthDamage;
+        
+            // Reducir los puntos de vida del defensor según el daño infligido
+            if (defender === 'JunkPile') {
+                junkpileHeroObject.JunkPile.powerstats.hitPoints -= totalDamage;
+            } else {
+                randomHeroObject.RandomHero.powerstats.hitPoints -= totalDamage;
+            }
+        } else {
+            console.log(`El ataque de ${attacker} falla.`);
+        }
+    }
+    
+    // Mostrar los powerStats de cada jugador antes de cambiar de turno
+    console.log(`PowerStats de ${junkpileHeroObject.JunkPile.name}:`, junkpileHeroObject.JunkPile.powerstats);
+    console.log(`PowerStats de ${randomHeroObject.RandomHero.name}:`, randomHeroObject.RandomHero.powerstats);
+    
+    // Verificar si alguno de los héroes tiene 0 o menos hitPoints
+    if (junkpileHeroObject.JunkPile.powerstats.hitPoints <= 0 || randomHeroObject.RandomHero.powerstats.hitPoints <= 0) {
+    
+        console.log('Fin del combate.');
+        // Mostrar el resultado del combate
+        if (junkpileHeroObject.JunkPile.powerstats.hitPoints <= 0 && randomHeroObject.RandomHero.powerstats.hitPoints <= 0) {
+            console.log('El combate termina en empate.');
+        } else if (junkpileHeroObject.JunkPile.powerstats.hitPoints <= 0) {
+            console.log('El héroe RandomHero gana el combate.');
+        } else {
+            console.log('El héroe JunkPile gana el combate.');
+        }
+        return; // Salir de la función para detener el combate
+    }
+    
+    // Cambiar el turno al otro héroe solo si el combate no ha terminado
+    const nextTurn = attacker === 'JunkPile' ? 'RandomHero' : 'JunkPile';
+    console.log(`Turno cambiado a ${nextTurn}.`);
+    
+    return nextTurn;
+}
+
+
+
+function simulateCombat() {
+    const startingHero = determineStartingHero(junkpileHeroObject.JunkPile.powerstats.junkPileStats, randomHeroObject.RandomHero.powerstats.junkPileStats);
+    let currentHero = startingHero;
+    
+    console.log(`El combate comienza con turno para ${startingHero} .`);
+    
+    function nextTurn() {
+        // Simular el turno actual
+        const nextHero = simulateTurn(currentHero, currentHero === 'JunkPile' ? 'RandomHero' : 'JunkPile');
+        
+        // Si se devuelve un próximo héroe, cambiar al siguiente turno
+        if (nextHero) {
+            currentHero = nextHero;
+            // Pausa antes de continuar con el siguiente turno
+            setTimeout(nextTurn, 5000);  
+        } else {
+            //console.log('Fin del combate.');
+        }
+    }
+
+    // Iniciar el primer turno
+    nextTurn();
+}
+
+
+
+
 
 module.exports = { getHeroes };
