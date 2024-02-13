@@ -16,3 +16,4 @@ async function getSuperheroes() {
 
 getSuperheroes();
 
+module.exports = { getSuperheroes };
