@@ -117,7 +117,7 @@ function determineStartingHero(junkPileStats, randomHeroStats) {
 }
 
 function simulateTurn(attacker, defender) {
-    console.log(`///////////////////////////////////`);
+    console.log(`                                   `);
     console.log(`${attacker} comienza el turno.`);
     const attackRoll = rollD100();
     console.log(`${attacker} lanza un dado de 100 caras y obtiene ${attackRoll}.`);
@@ -194,7 +194,7 @@ function simulateTurn(attacker, defender) {
             console.log(`El ataque de ${attacker} falla.`);
         }
     }
-    
+    console.log(`                                   `);
     // Mostrar los powerStats de cada jugador antes de cambiar de turno
     console.log(`PowerStats de ${junkpileHeroObject.JunkPile.name}:`, junkpileHeroObject.JunkPile.powerstats);
     console.log(`PowerStats de ${randomHeroObject.RandomHero.name}:`, randomHeroObject.RandomHero.powerstats);
@@ -211,7 +211,7 @@ function simulateTurn(attacker, defender) {
         } else {
             console.log('El héroe JunkPile gana el combate.');
         }
-        return; // Salir de la función para detener el combate
+        return;
     }
     
     // Cambiar el turno al otro héroe solo si el combate no ha terminado
@@ -224,26 +224,32 @@ function simulateTurn(attacker, defender) {
 
 
 function simulateCombat() {
+    let turnCounter = 1; 
+    
     const startingHero = determineStartingHero(junkpileHeroObject.JunkPile.powerstats.junkPileStats, randomHeroObject.RandomHero.powerstats.junkPileStats);
     let currentHero = startingHero;
     
-    console.log(`El combate comienza con turno para ${startingHero} .`);
+    console.log(`El combate comienza con turno para ${startingHero}.`);
     
     function nextTurn() {
+        console.log(`                                   `);
+        console.log(`///////////////////////////////////`);
+        // Mostrar el número de turno actual
+        console.log(`ASALTO ${turnCounter}:`);
+        console.log(`///////////////////////////////////`);
+        
         // Simular el turno actual
         const nextHero = simulateTurn(currentHero, currentHero === 'JunkPile' ? 'RandomHero' : 'JunkPile');
         
-        // Si se devuelve un próximo héroe, cambiar al siguiente turno
         if (nextHero) {
             currentHero = nextHero;
-            // Pausa antes de continuar con el siguiente turno
+            turnCounter++; 
             setTimeout(nextTurn, 5000);  
         } else {
             //console.log('Fin del combate.');
         }
     }
 
-    // Iniciar el primer turno
     nextTurn();
 }
 
