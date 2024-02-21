@@ -15,7 +15,7 @@ async function getHeroes(req, res) {
             heroesObject[hero.name] = hero;
         });
 
-        console.log('HEROES', heroesObject)
+        //console.log('HEROES', heroesObject)
 
         // Una vez que se han obtenido los datos, llamar a createNewHeroes
         await createNewHeroes();
@@ -144,7 +144,7 @@ function simulateTurn(attacker, defender) {
                 pifiaDamage = Math.floor(attacker === 'JunkPile' ? junkpileHeroObject.JunkPile.powerstats.speed / roll4D3() : randomHeroObject.RandomHero.powerstats.speed / roll4D3());
             }
             
-            console.log(`${attacker} sufre ${pifiaDamage} puntos de daño por pifia.`);
+            console.log(`FAIL!! ${attacker} obtiene ${damageRoll} y se clava el arma en su pierna izquierda. Recibe un daño de ${pifiaDamage} puntos por pifia.`);
             
             // Reducir los puntos de vida del héroe que realiza la pifia
             if (attacker === 'JunkPile') {
@@ -228,7 +228,20 @@ function simulateCombat() {
     
     const startingHero = determineStartingHero(junkpileHeroObject.JunkPile.powerstats.junkPileStats, randomHeroObject.RandomHero.powerstats.junkPileStats);
     let currentHero = startingHero;
-    
+    const oppositeHero = startingHero === 'JunkPile' ? 'RandomHero' : 'JunkPile';
+
+    //MENSAJE INICIAL DE BATALLA
+    console.log(`                                   `);
+    console.log(`///////////////////////////////////`);
+    console.log('WELCOME TO THE COMBAT ARENA');
+    console.log(`///////////////////////////////////`);
+    console.log(`Hoy combatiran ${startingHero} y ${oppositeHero}`);
+    console.log(`///////////////////////////////////`);
+    console.log(`                                   `);
+    console.log(`Lista de atributos`);
+    console.log('JunkPile: ', junkpileHeroObject.JunkPile.powerstats);
+    console.log('RandomHero: ', randomHeroObject.RandomHero.powerstats);
+    console.log(`///////////////////////////////////`);
     console.log(`El combate comienza con turno para ${startingHero}.`);
     
     function nextTurn() {
