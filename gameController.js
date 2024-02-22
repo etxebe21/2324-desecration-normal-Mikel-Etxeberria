@@ -208,8 +208,10 @@ function simulateTurn(attacker, defender) {
             console.log('El combate termina en empate.');
         } else if (junkpileHeroObject.JunkPile.powerstats.hitPoints <= 0) {
             console.log('El héroe RandomHero gana el combate.');
+            console.log('El héroe JankPile ha sido derrotado.');
         } else {
             console.log('El héroe JunkPile gana el combate.');
+            console.log('El héroe RandomHero ha sido derrotado.');
         }
         return;
     }
@@ -220,8 +222,6 @@ function simulateTurn(attacker, defender) {
     
     return nextTurn;
 }
-
-
 
 function simulateCombat() {
     let turnCounter = 1; 
