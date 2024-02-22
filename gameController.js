@@ -167,11 +167,11 @@ function simulateTurn(attacker, defender) {
             let criticalDamage;
             
             if (damageRoll === 18) {
-                criticalDamage = Math.floor((attacker === 'JunkPile' ? junkpileHeroObject.JunkPile.powerstats.intelligence * junkpileHeroObject.JunkPile.powerstats.durability : randomHeroObject.RandomHero.powerstats.intelligence * randomHeroObject.RandomHero.powerstats.durability) / 100) * rollD3();
+                criticalDamage = Math.ceil((attacker === 'JunkPile' ? junkpileHeroObject.JunkPile.powerstats.intelligence * junkpileHeroObject.JunkPile.powerstats.durability : randomHeroObject.RandomHero.powerstats.intelligence * randomHeroObject.RandomHero.powerstats.durability) / 100) * rollD3();
             } else if (damageRoll === 19) {
-                criticalDamage = Math.floor((attacker === 'JunkPile' ? junkpileHeroObject.JunkPile.powerstats.intelligence * junkpileHeroObject.JunkPile.powerstats.durability : randomHeroObject.RandomHero.powerstats.intelligence * randomHeroObject.RandomHero.powerstats.durability) / 100) * (rollD3() + rollD3());
+                criticalDamage = Math.ceil((attacker === 'JunkPile' ? junkpileHeroObject.JunkPile.powerstats.intelligence * junkpileHeroObject.JunkPile.powerstats.durability : randomHeroObject.RandomHero.powerstats.intelligence * randomHeroObject.RandomHero.powerstats.durability) / 100) * (rollD3() + rollD3());
             } else {
-                criticalDamage = Math.floor((attacker === 'JunkPile' ? junkpileHeroObject.JunkPile.powerstats.intelligence * junkpileHeroObject.JunkPile.powerstats.durability : randomHeroObject.RandomHero.powerstats.intelligence * randomHeroObject.RandomHero.powerstats.durability) / 100) * (rollD5() + rollD5() + rollD5());
+                criticalDamage = Math.ceil((attacker === 'JunkPile' ? junkpileHeroObject.JunkPile.powerstats.intelligence * junkpileHeroObject.JunkPile.powerstats.durability : randomHeroObject.RandomHero.powerstats.intelligence * randomHeroObject.RandomHero.powerstats.durability) / 100) * (rollD5() + rollD5() + rollD5());
             }
             
             console.log(`¡CRITICAL HIT! ${attacker} inflige ${criticalDamage} puntos de daño crítico a ${defender}.`);
